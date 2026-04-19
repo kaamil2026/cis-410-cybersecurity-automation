@@ -4,7 +4,7 @@
 
 - Name: Kaamil Ali
 - GitHub Username: kaamil2026
-- Major: [your major]
+- Major: [Cyber-Security]
 - Semester: Spring 2026
 
 ## About This Course
