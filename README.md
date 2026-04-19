@@ -20,3 +20,6 @@ This repository is my CIS 410 Cybersecurity Automation portfolio. In this course
 ## Fun Fact
 
 I enjoy learning about cybersecurity and technology.
+## My Week 2 Infrastructure
+Runner VM: kaamil-runner
+Runner IP: 192.168.1.154
