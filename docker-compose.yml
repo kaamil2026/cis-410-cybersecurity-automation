@@ -1,7 +1,11 @@
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.vulnerable
+
     container_name: cis410-web
+    
     ports:
       # HOST_PORT is injected by the deploy workflow per environment:
       #   deploy-dev.yml     → HOST_PORT=5000
