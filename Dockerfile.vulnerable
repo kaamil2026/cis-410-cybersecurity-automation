@@ -40,7 +40,7 @@ WORKDIR /app
 # VIOLATION 2: Copy everything before installing dependencies — no layer caching
 COPY . .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r vulnerable_app/requirements.txt
 
 EXPOSE 5000
 
