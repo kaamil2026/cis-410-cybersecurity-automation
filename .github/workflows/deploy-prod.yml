@@ -17,10 +17,10 @@ jobs:
           mkdir -p ~/app
         "
 
-        scp -i ~/.ssh/deploy_key_prod -o StrictHostKeyChecking=no \
+        scp -r -i ~/.ssh/deploy_key_prod -o StrictHostKeyChecking=no \
           docker-compose.yml \
           Dockerfile.vulnerable \
-          -r vulnerable_app \
+          vulnerable_app \
           ${{ secrets.PROD_USER }}@${{ secrets.PROD_HOST }}:~/app/
 
     - name: Deploy Containers on Production
