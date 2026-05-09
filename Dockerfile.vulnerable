@@ -41,10 +41,8 @@ WORKDIR /app
 COPY . .
 
 # app/requirements.txt is populated by copying vulnerable_app/requirements.txt
-# into app/ before committing (see HOW TO USE above)
-RUN pip install --no-cache-dir -r app/requirements.txt
-
+# into app/ before committing (see HOW TO USE above)RUN pip install --no-cache-dir -r vulnerable_app/requirements.txt
 EXPOSE 5000
 
 # VIOLATION 3: No USER instruction — runs as root
-CMD ["python", "app/app.py"]
+CMD ["python","vulnerable_app/app.py"]
