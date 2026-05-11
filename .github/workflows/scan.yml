@@ -67,8 +67,7 @@ jobs:
           .venv/bin/pip install -r vulnerable_app/requirements.txt
 
       - name: Snyk dependency scan (SCA)
-        run: ./snyk test --file=app/requirements.txt --severity-threshold=high --package-manager=pip --command=.venv/bin/python3
-        env:
+        run: ./snyk test --file=vulnerable_app/requirements.txt --severity-threshold=high --package-manager=pip --command=.venv/bin/python3        env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
       - name: Cleanup venv
