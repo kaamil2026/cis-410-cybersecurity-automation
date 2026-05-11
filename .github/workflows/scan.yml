@@ -40,7 +40,7 @@ jobs:
           ./snyk --version
 
       - name: Snyk Code scan (SAST)
-        run: ./snyk code test --severity-threshold=high app/
+        run: ./snyk code test --severity-threshold=high vulnerable_app/
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
@@ -64,7 +64,7 @@ jobs:
         run: |
           echo "${{ secrets.SUDO_PASS }}" | /usr/bin/sudo -S apt-get install -y python3-pip python3-venv
           python3 -m venv .venv
-          .venv/bin/pip install -r app/requirements.txt
+          .venv/bin/pip install -r vulnerable_app/requirements.txt
 
       - name: Snyk dependency scan (SCA)
         run: ./snyk test --file=app/requirements.txt --severity-threshold=high --package-manager=pip --command=.venv/bin/python3
@@ -105,7 +105,7 @@ jobs:
       - name: Copy files to yourname-dev
         run: |
           scp -i /tmp/scan_key -o StrictHostKeyChecking=no -r \
-            snyk Dockerfile app/ \
+            snyk Dockerfile vulnerable_app/ \
             ${{ secrets.DEV_USER }}@${{ secrets.DEV_HOST }}:/tmp/snyk-scan/
 
       - name: Build and scan image on yourname-dev
