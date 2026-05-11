@@ -64,10 +64,10 @@ jobs:
         run: |
           echo "${{ secrets.SUDO_PASS }}" | /usr/bin/sudo -S apt-get install -y python3-pip python3-venv
           python3 -m venv .venv
-          .venv/bin/pip install -r app/requirements.txt
+          .venv/bin/pip install -r vulnerable_app/requirements.txt
 
       - name: Snyk dependency scan (SCA)
-        run: ./snyk test --file=app/requirements.txt --severity-threshold=high --package-manager=pip --command=.venv/bin/python3
+        run: ./snyk test --file=vulnerable_app/requirements.txt --severity-threshold=high --package-manager=pip --command=.venv/bin/python3
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
