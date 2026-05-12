@@ -40,7 +40,7 @@ jobs:
           ./snyk --version
 
       - name: Snyk Code scan (SAST)
-        run: ./snyk code test --severity-threshold=high vulnerable_app/
+        run: ./snyk code test --severity-threshold=high vulnerable_app/ \
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
@@ -121,14 +121,14 @@ jobs:
           # the Snyk CLI Go binary itself)
           mv snyk /tmp/snyk-cli
           echo "=== Building image ==="
-          sudo docker build -t snyk-scan-target .
+          sudo docker build -f Dockerfile.vulnerable -t snyk-scan-target .
           echo "=== Exporting image to tar ==="
           sudo docker save snyk-scan-target -o /tmp/image.tar
           sudo chmod 644 /tmp/image.tar
           echo "=== Running Snyk container scan ==="
           SNYK_TOKEN="${{ secrets.SNYK_TOKEN }}" \
             /tmp/snyk-cli container test /tmp/image.tar \
-           --file=Dockerfile.vulnerable
+           --file=Dockerfile.vulnerable \
             --severity-threshold=high
           ENDSSH
 
