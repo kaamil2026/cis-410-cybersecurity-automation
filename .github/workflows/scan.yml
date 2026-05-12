@@ -128,7 +128,7 @@ jobs:
           echo "=== Running Snyk container scan ==="
           SNYK_TOKEN="${{ secrets.SNYK_TOKEN }}" \
             /tmp/snyk-cli container test /tmp/image.tar \
-            --file=Dockerfile \
+           --file=Dockerfile.vulnerable
             --severity-threshold=high
           ENDSSH
 
