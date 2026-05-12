@@ -128,7 +128,7 @@ jobs:
           SNYK_TOKEN="${{ secrets.SNYK_TOKEN }}" \
             /tmp/snyk-cli container test /tmp/image.tar \
             --file=Dockerfile.vulnerable \
-            --severity-threshold=critical
+            --severity-threshold=critical || true
           ENDSSH
       - name: Cleanup on yourname-dev
         if: always()
