@@ -103,11 +103,7 @@ jobs:
             ${{ secrets.DEV_USER }}@${{ secrets.DEV_HOST }} \
             "mkdir -p /tmp/snyk-scan"
 
-      - name: Copy files to yourname-dev
-        run: |
-          scp -i /tmp/scan_key -o StrictHostKeyChecking=no -r \
-            snyk Dockerfile.vulnerable vulnerable_app/ \
-            ${{ secrets.DEV_USER }}@${{ secrets.DEV_HOST }}:/tmp/snyk-scan/
+     
 
                - name: Copy files to yourname-dev
           run: |
