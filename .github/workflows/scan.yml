@@ -96,11 +96,18 @@ jobs:
           chmod 600 /tmp/scan_key
 
       # Create the working directory on dev before copying files into it
+          # Create the working directory on dev before copying files into it
       - name: Create working directory on yourname-dev
         run: |
           ssh -i /tmp/scan_key -o StrictHostKeyChecking=no \
             ${{ secrets.DEV_USER }}@${{ secrets.DEV_HOST }} \
             "mkdir -p /tmp/snyk-scan"
+
+      - name: Copy files to yourname-dev
+        run: |
+          scp -i /tmp/scan_key -o StrictHostKeyChecking=no -r \
+            snyk Dockerfile.vulnerable vulnerable_app/ \
+            ${{ secrets.DEV_USER }}@${{ secrets.DEV_HOST }}:/tmp/snyk-scan/
 
           - name: Copy files to yourname-dev
             run: |
