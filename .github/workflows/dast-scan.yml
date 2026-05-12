@@ -77,20 +77,15 @@ jobs:
             "ls -la /tmp/zap-reports/"
 
           scp -i /tmp/dast_key -o StrictHostKeyChecking=no \
-            ${{ secrets.DEV_USER }}@${{ secrets.DEV_HOST }}:/tmp/zap-reports/zap-report.html \
-            ./zap-report.html
-
-          scp -i /tmp/dast_key -o StrictHostKeyChecking=no \
-            ${{ secrets.DEV_USER }}@${{ secrets.DEV_HOST }}:/tmp/zap-reports/zap-report.json \
-            ./zap-report.json
+          ${{ secrets.DEV_USER }}@${{ secrets.DEV_HOST }}:/tmp/zap-reports/zap.yaml \
+          ./zap.yaml
 
       - name: Upload ZAP Report
         uses: actions/upload-artifact@v4
         with:
           name: zap-dast-report-${{ github.event.inputs.environment_label || 'dev' }}-run${{ github.run_number }}
           path: |
-            zap-report.html
-            zap-report.json
+            zap.yml
 
       - name: Cleanup
         if: always()
