@@ -119,8 +119,7 @@ jobs:
           mv snyk /tmp/snyk-cli
 
           echo "=== Building image ==="
-          sudo docker build -t snsudo docker build -f Dockerfile.vulnerable -t snyk-scan-target .yk-scan-target .
-
+          sudo docker build -f Dockerfile.vulnerable -t snyk-scan-target .
           echo "=== Exporting image to tar ==="
           sudo docker save snyk-scan-target -o /tmp/image.tar
           sudo chmod 644 /tmp/image.tar
