@@ -1,4 +1,20 @@
 # .github/workflows/scan.yml
+# ─────────────────────────────────────────────────────────────────────────────
+# Security gate — runs on every pull request to main.
+#
+# THREE scan jobs:
+#   snyk-code       SAST:      scans Python source code on the runner
+#   snyk-deps       SCA:       scans dependencies using a venv on the runner
+#   snyk-container  Container: SSHs into yourname-dev (which has Docker),
+#                              builds and scans the image there, then cleans up
+#
+# REQUIRED SECRETS:
+#   SNYK_TOKEN      — app.snyk.io → Account Settings → Auth Token
+#   SUDO_PASS       — already configured from Week 3
+#   DEV_HOST        — already configured from Week 3
+#   DEV_USER        — already configured from Week 3
+#   DEV_SSH_KEY     — already configured from Week 3
+# ─────────────────────────────────────────────────────────────────────────────
 
 name: "Security Scan"
 
@@ -29,7 +45,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
 
-  # ── Job 2: SCA — dependency vulnerability scan ─────────────────────────────
+  # ── Job 2: SCA — dependency vulnerability scan ──────────────────────────────
   snyk-deps:
     name: "Snyk SCA (Dependencies)"
     runs-on: self-hosted
@@ -51,7 +67,7 @@ jobs:
           .venv/bin/pip install -r vulnerable_app/requirements.txt
 
       - name: Snyk dependency scan (SCA)
-        run: ./snyk test --file=vulnerable_app/requirements.txt --severity-threshold=high --package-manager=pip --command=.venv/bin/python3
+        run: ./snyk test --file=app/requirements.txt --severity-threshold=high --package-manager=pip --command=.venv/bin/python3
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
@@ -60,7 +76,7 @@ jobs:
         run: rm -rf .venv
 
 
-  # ── Job 3: Container scan — runs on yourname-dev via SSH ───────────────────
+  # ── Job 3: Container scan — runs on yourname-dev via SSH ────────────────────
   snyk-container:
     name: "Container Scan — Snyk"
     runs-on: self-hosted
@@ -79,6 +95,7 @@ jobs:
           echo "${{ secrets.DEV_SSH_KEY }}" > /tmp/scan_key
           chmod 600 /tmp/scan_key
 
+      # Create the working directory on dev before copying files into it
       - name: Create working directory on yourname-dev
         run: |
           ssh -i /tmp/scan_key -o StrictHostKeyChecking=no \
@@ -88,7 +105,7 @@ jobs:
       - name: Copy files to yourname-dev
         run: |
           scp -i /tmp/scan_key -o StrictHostKeyChecking=no -r \
-            snyk Dockerfile.vulnerable vulnerable_app/ \
+            snyk Dockerfile vulnerable_app/ \
             ${{ secrets.DEV_USER }}@${{ secrets.DEV_HOST }}:/tmp/snyk-scan/
 
       - name: Build and scan image on yourname-dev
@@ -98,21 +115,20 @@ jobs:
           set -e
           cd /tmp/snyk-scan
           chmod +x snyk
-
+          # Move snyk binary out of build context so COPY . . does not
+          # include it in the image (avoids false positives from scanning
+          # the Snyk CLI Go binary itself)
           mv snyk /tmp/snyk-cli
-
           echo "=== Building image ==="
-          sudo docker build -f Dockerfile.vulnerable -t snyk-scan-target .
-
+          sudo docker build -t snyk-scan-target .
           echo "=== Exporting image to tar ==="
           sudo docker save snyk-scan-target -o /tmp/image.tar
           sudo chmod 644 /tmp/image.tar
-
           echo "=== Running Snyk container scan ==="
           SNYK_TOKEN="${{ secrets.SNYK_TOKEN }}" \
-          /tmp/snyk-cli container test /tmp/image.tar \
-          --file=Dockerfile.vulnerable \
-          --severity-threshold=high
+            /tmp/snyk-cli container test /tmp/image.tar \
+            --file=Dockerfile.vulnerable \
+            --severity-threshold=high
           ENDSSH
 
       - name: Cleanup on yourname-dev
@@ -121,5 +137,4 @@ jobs:
           ssh -i /tmp/scan_key -o StrictHostKeyChecking=no \
             ${{ secrets.DEV_USER }}@${{ secrets.DEV_HOST }} \
             "sudo docker rmi snyk-scan-target 2>/dev/null || true; rm -rf /tmp/snyk-scan /tmp/snyk-cli /tmp/image.tar" || true
-
           rm -f /tmp/scan_key
