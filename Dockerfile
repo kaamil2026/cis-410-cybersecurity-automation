@@ -28,8 +28,8 @@
 #
 #   VIOLATION 3: No USER instruction — container runs as root (UID 0)
 #   If the app has a code execution vulnerability, attacker gets root inside
-#   the container. Trivy and Semgrep will both flag this.
-#   Verify: docker compose exec web whoami  →  returns 'root' not 'appuser'
+#   the container. Trivy and Semgrep will both flag thisA
+#   Verify: docker compose exec web whoami  →  returns 'root' Anot 'appuser'
 # ─────────────────────────────────────────────────────────────────────────────
 
 # VIOLATION 1: Unpinned base image
