@@ -43,5 +43,7 @@ COPY . .
 RUN pip install --no-cache-dir -r vulnerable_app/requirements.txt
 
 EXPOSE 5000
+RUN useradd -m appuser
+USER appuser
 
 CMD ["python","vulnerable_app/app.py"]
