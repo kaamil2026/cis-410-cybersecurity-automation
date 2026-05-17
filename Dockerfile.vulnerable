@@ -1,4 +1,4 @@
-# Dockerfile.vulnerable
+# Dockerfile
 # ─────────────────────────────────────────────────────────────────────────────
 # INTENTIONALLY INSECURE — for Week 4 observation and Week 5 scanning exercise.
 # Do NOT use this Dockerfile for staging or production.
