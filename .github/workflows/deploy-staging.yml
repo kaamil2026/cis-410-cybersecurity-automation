@@ -13,7 +13,6 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
 
-  
     - name: Copy Files to Staging
       run: |
         ssh -i ~/.ssh/deploy_key_staging -o StrictHostKeyChecking=no ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }} "
@@ -22,7 +21,7 @@ jobs:
 
         scp -r -i ~/.ssh/deploy_key_staging -o StrictHostKeyChecking=no \
           docker-compose.yml \
-          Dockerfile\
+          Dockerfile \
           vulnerable_app \
           ${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:~/app/
 
