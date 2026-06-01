@@ -1,0 +1,32 @@
+name: Deploy to Production
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-production:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Copy Files to Production
+      run: |
+        ssh -i ~/.ssh/deploy_key_prod -o StrictHostKeyChecking=no ${{ secrets.PROD_USER }}@${{ secrets.PROD_HOST }} "
+          mkdir -p ~/app
+        "
+
+        scp -r -i ~/.ssh/deploy_key_prod -o StrictHostKeyChecking=no \
+          docker-compose.yml \
+          Dockerfile \
+          vulnerable_app \
+          ${{ secrets.PROD_USER }}@${{ secrets.PROD_HOST }}:~/app/
+
+    - name: Deploy Containers on Production
+      run: |
+        ssh -i ~/.ssh/deploy_key_prod -o StrictHostKeyChecking=no ${{ secrets.PROD_USER }}@${{ secrets.PROD_HOST }} "
+          cd ~/app &&
+          echo '${{ secrets.SUDO_PASS }}' | sudo -S docker compose down || true &&
+          echo '${{ secrets.SUDO_PASS }}' | sudo -S docker compose up -d --build
+        "
